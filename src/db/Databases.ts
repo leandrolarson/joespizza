@@ -11,6 +11,8 @@ export default class Databases {
 
   constructor() {
     this._products = [];
+    this._clients = [];
+    this._orders = [];
   }
 
   public addClient(client: Client): void {
@@ -33,8 +35,8 @@ export default class Databases {
     return this._clients;
   }
 
-  public placeOrder(): Order[] {
-    return this._orders;
+  public placeOrder(order: Order): void {
+    this._orders.push(order);
 
   }
 

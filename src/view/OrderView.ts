@@ -2,6 +2,8 @@
 
 import prompts from 'prompts';
 import MainController from '../control/MainController';
+import Order from '../service/Order'; // Importação da classe Order
+import Client from '../model/Client'; // Importação da classe Client
 
 export default class OrderView {
 
@@ -13,20 +15,30 @@ export default class OrderView {
 
     public async start(): Promise<void> {
         console.log('\n--- Novo Pedido ---');
-        // Passo 1: Selecionar o cliente (vamos simplificar para este exemplo)
-        // Em um sistema real, você listaria os clientes e pediria para o usuário escolher um
-        const clientName = await prompts({
-            type: 'text',
-            name: 'name',
-            message: 'Digite o nome do cliente:',
+
+        // Passo 1: Selecionar o cliente
+        const clients = this.mainController.db.getAllClients();
+        if (clients.length === 0) {
+            console.log('\n❌ Nenhum cliente cadastrado. Por favor, cadastre um cliente primeiro.');
+            return;
+        }
+
+        const clientChoices = clients.map(c => ({ title: c.name, value: c }));
+        const clientResponse = await prompts({
+            type: 'select',
+            name: 'client',
+            message: 'Selecione o cliente para o pedido:',
+            choices: clientChoices,
         });
 
+        const selectedClient: Client = clientResponse.client;
+        const newOrder = new Order(selectedClient); // Criação do novo pedido
+
         // Passo 2: Selecionar os produtos
-        const productsInOrder = [];
         let addingProducts = true;
         while (addingProducts) {
-            const products = this.mainController.db.getAllProducts(); // Método que o controller precisa ter
-            const choices = products.map(p => ({ title: `${p.name} - R$ ${p.price.toFixed(2)}`, value: p.name }));
+            const products = this.mainController.db.getAllProducts();
+            const choices = products.map(p => ({ title: `${p.name} - R$ ${p.price.toFixed(2)}`, value: p }));
 
             const response = await prompts({
                 type: 'select',
@@ -38,17 +50,17 @@ export default class OrderView {
             if (response.product === 'finish') {
                 addingProducts = false;
             } else {
-                const selectedProduct = products.find(p => p.name === response.product);
+                const selectedProduct = response.product;
                 if (selectedProduct) {
-                    productsInOrder.push(selectedProduct);
+                    newOrder.addProduct(selectedProduct); // Adiciona o produto ao pedido
                     console.log(`\n"${selectedProduct.name}" adicionado ao pedido.`);
                 }
             }
         }
 
         // Passo 3: Finalizar o pedido
-        if (productsInOrder.length > 0) {
-            this.mainController.db.placeOrder();
+        if (newOrder.products.length > 0) {
+            this.mainController.db.placeOrder(newOrder); // Chamada corrigida, passando o objeto 'newOrder'
             console.log('\n✅ Pedido realizado com sucesso!');
         } else {
             console.log('\n❌ Nenhum produto adicionado. Pedido cancelado.');

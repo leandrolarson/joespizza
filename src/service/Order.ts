@@ -1,20 +1,27 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import Client from "../model/Client";
 import Product from "../model/Product";
+
+enum OrderStatus {
+  aceito,
+  preparo,
+  pronto,
+  finalizado,
+}
 
 export default class Order {
   private _id: string;
   private _client: Client;
   private _products: Product[];
   private _total: number;
-  private _status: string;
+  private _status: OrderStatus;
 
   constructor(client: Client) {
     this._id = uuidv4();
     this._client = client;
     this._products = [];
     this._total = 0;
-    this._status = "pendente";
+    this._status = OrderStatus.aceito;
   }
 
   public addProduct(product: Product): void {
@@ -23,7 +30,10 @@ export default class Order {
   }
 
   private calculateTotal(): void {
-    this._total = this._products.reduce((sum, product) => sum + product.price, 0);
+    this._total = this._products.reduce(
+      (sum, product) => sum + product.price,
+      0
+    );
   }
 
   public get id(): string {
@@ -42,11 +52,11 @@ export default class Order {
     return this._total;
   }
 
-  public get status(): string {
+  public get status(): OrderStatus {
     return this._status;
   }
 
-  public set status(value: string) {
-    this._status = value;
+  public set status(newStatus: OrderStatus) {
+    this._status = newStatus;
   }
 }

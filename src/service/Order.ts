@@ -1,13 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import Client from "../model/Client";
 import Product from "../model/Product";
-
-enum OrderStatus {
-  aceito,
-  preparo,
-  pronto,
-  finalizado,
-}
+import { OrderStatus } from "./OrderStatus";
 
 export default class Order {
   private _id: string;
@@ -30,10 +24,10 @@ export default class Order {
   }
 
   private calculateTotal(): void {
-    this._total = this._products.reduce(
-      (sum, product) => sum + product.price,
-      0
-    );
+    this._total = 0;
+    for (let i = 0; i < this._products.length; i++) {
+      this._total += this._products[i].price;
+    }
   }
 
   public get id(): string {

@@ -1,3 +1,5 @@
 import MainController from "./control/MainController";
+import Databases from "./db/Databases";
 
-new MainController();
+const dbInstance = new Databases();
+new MainController(dbInstance);

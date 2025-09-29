@@ -2,11 +2,15 @@ import Database from "../db/Databases";
 import Product from "../model/Product";
 import Client from "../model/Client";
 import MainScreen from "../view/MainScreen";
+import Databases from "../db/Databases";
 
 export default class MainController {
-  public db: Database = new Database();
+  //public db: Database = new Database(); Removido o alto acoplamento
 
-  constructor() {
+  private db: Databases;
+
+  constructor(db: Databases) {
+    this.db = db;
     new MainScreen(this);
   }
 

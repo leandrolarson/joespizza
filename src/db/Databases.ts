@@ -1,10 +1,9 @@
 import Product from "../model/Product";
-import Pizza from "../model/Pizza";
-import Drink from "../model/Drink";
 import Client from "../model/Client";
 import Order from "../service/Order";
+import { IDatabase } from "./IDatabase";
 
-export default class Databases {
+export default class Databases implements IDatabase {
   private _products: Product[];
   private _clients: Client[];
   private _orders: Order[];
@@ -27,17 +26,11 @@ export default class Databases {
     return this._products;
   }
 
-  public getAllProducts(): Product[] {
-    return this._products;
-  }
-
   public getAllClients(): Client[] {
     return this._clients;
   }
 
   public placeOrder(order: Order): void {
     this._orders.push(order);
-
   }
-
 }

@@ -69,11 +69,21 @@ export default class ProductView {
   }
 
   private listProducts(): void {
-    const products = this.mainController.db.products;
+    const products = this.mainController.getAllProducts();
+
     console.log("\n--- Lista de Produtos ---");
+
+    if (products.length === 0) {
+      console.log("Nenhum produto cadastrado.");
+      console.log("-------------------------\n");
+      return;
+    }
+
     products.forEach((product) => {
       console.log(
-        `\nNome: ${product.name}\nDescrição: ${product.description}\nPreço: ${product.price}`
+        `\nNome: ${product.name}\nDescrição: ${
+          product.description
+        }\nPreço: R$ ${product.price.toFixed(2)}`
       );
     });
     console.log("-------------------------\n");

@@ -71,7 +71,7 @@ export default class ClientView {
   }
 
   private listClients(): void {
-    const clients = this.mainController.db.getAllClients();
+    const clients = this.mainController.getAllClients();
     console.log("\n--- Lista de Clientes ---");
     clients.forEach((client) => {
       console.log(

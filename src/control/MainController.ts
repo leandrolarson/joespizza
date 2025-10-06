@@ -2,6 +2,7 @@ import Product from "../model/Product";
 import Client from "../model/Client";
 import MainScreen from "../view/MainScreen";
 import { IDatabase } from "../db/IDatabase";
+import Order from "../service/Order";
 
 export default class MainController {
   //public db: Database = new Database(); alto acoplamento!
@@ -24,5 +25,25 @@ export default class MainController {
 
   public getNewClient(_name: string, _address: string, _phone: string): Client {
     return new Client(_name, _address, _phone);
+  }
+
+  public getAllClients(): Client[] {
+    return this.db.getAllClients();
+  }
+
+  public getAllProducts(): Product[] {
+    return this.db.products;
+  }
+
+  public placeOrder(client: Client, products: Product[]): Order {
+    const newOrder = new Order(client);
+
+    products.forEach((product) => {
+      newOrder.addProduct(product);
+    });
+
+    this.db.placeOrder(newOrder);
+
+    return newOrder;
   }
 }
